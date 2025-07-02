@@ -1,0 +1,25 @@
+{
+  // 🚩 tsconfig.json vacío para que ts-node use configuración clásica (CommonJS)
+  // En proyectos reales, deberías completar esto para definir:
+  // - Dónde compilar (outDir, rootDir)
+  // - Cómo compilar (target, module)
+  // - Qué reglas aplicar (strict, esModuleInterop)
+  // Por ahora, este archivo solo existe para evitar que ts-node active ESM por defecto.
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "strict": false,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+   },
+   "include": ["src/**/*.ts"],
+   "exclude": ["src/**/*.test.ts"]
+}
+ 
