@@ -1,4 +1,3 @@
-
 import express from "express";  
 import colors from 'colors'
 import cors, { CorsOptions } from 'cors'
@@ -11,10 +10,9 @@ export async function connectDB() {
     try {
         await db.authenticate()
         db.sync()
-        console.log( colors.green.bold('Conexión exitosa a la BD'))
+        console.log(colors.green.bold('Conexión exitosa a la BD'))
     } catch (error) {
-       // console.log(error)
-        console.log( colors.bgRed.white('Hubo un error al conectar a la BD'))
+        console.log(colors.bgRed.white('Hubo un error al conectar a la BD'))
     }
 }
 
@@ -23,37 +21,43 @@ connectDB()
 // Instancia de express
 const server = express()
 
-// Permitir conexiones desde el frontend
+// Lista de orígenes permitidos
+const whitelist = [
+    process.env.FRONTEND_URL,
+    'https://crud-frontend-fullstack.vercel.app',
+    'http://localhost:5173'
+];
+
+// Middleware CORS robusto
 const corsOptions: CorsOptions = {
-
-    // oigin: es el origen de la petición. Quien me envía la petición
-    // callback: es la función que se ejecuta cuando se recibe la petición    
     origin: function(origin, callback) {
-        console.log(origin)
-        console.log('FRONTEND_URL:', process.env.FRONTEND_URL)
+        console.log('🌐 Origin recibido:', origin)
+        console.log('✅ Whitelist:', whitelist)
 
-        if(origin === process.env.FRONTEND_URL) {
+        if (!origin || whitelist.includes(origin)) {
             console.log(colors.green.bold('Petición permitida'))
             callback(null, true)
         } else {
-            console.log(colors.red.bold('Petición no permitida'))
+            console.log(colors.red.bold('Petición no permitida desde:'), origin)
             callback(new Error('No permitido'))
         }
-    }
-}
+    },
+    credentials: true,
+};
+
 server.use(cors(corsOptions))
 
 // Leer datos de formularios
 server.use(express.json())
 
-// Middleware para ver las peticiones en la consola. Podemos elegir 'dev' o 'combined' u otras opcciones.
+// Middleware para ver las peticiones en consola
 server.use(morgan('dev'))
 
+// Rutas
 server.use('/api/products', router)
 
 server.get('/api', (req, res) => {
-    res.json({msg: 'Desde API'})
+    res.json({ msg: 'Desde API' })
 })
-
 
 export default server
